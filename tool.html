@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>資產配置工具</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ── 主題變數 ── */
+    :root {
+      --bg-page:    #f9fafb;
+      --bg-card:    #ffffff;
+      --bg-header:  #ffffff;
+      --bg-row:     #f9fafb;
+      --border:     #e5e7eb;
+      --border-light: #f3f4f6;
+      --text-main:  #111827;
+      --text-sub:   #6b7280;
+      --text-muted: #9ca3af;
+      --input-bg:   #ffffff;
+      --filter-bg:  #ffffff;
+      --filter-text:#6b7280;
+      --modal-bg:   #ffffff;
+      --toast-bg:   #111827;
+    }
+    html.dark {
+      --bg-page:    #0f172a;
+      --bg-card:    #1e293b;
+      --bg-header:  #1e293b;
+      --bg-row:     #263045;
+      --border:     #334155;
+      --border-light:#2d3f55;
+      --text-main:  #f1f5f9;
+      --text-sub:   #94a3b8;
+      --text-muted: #64748b;
+      --input-bg:   #0f172a;
+      --filter-bg:  #1e293b;
+      --filter-text:#94a3b8;
+      --modal-bg:   #1e293b;
+      --toast-bg:   #0f172a;
+    }
+
+    body         { background: var(--bg-page); color: var(--text-main); }
+    header, .filter-bar { background: var(--bg-header); border-color: var(--border); }
+    .card        { background: var(--bg-card); border-color: var(--border); }
+    .text-main   { color: var(--text-main); }
+    .text-sub    { color: var(--text-sub); }
+    .text-muted  { color: var(--text-muted); }
+    .divider     { background: var(--border); }
+
+    /* 表格 */
+    thead tr     { background: var(--bg-row); }
+    tbody tr:hover { background: var(--bg-row); }
+    tbody tr     { border-color: var(--border-light); }
+    th, td       { border-color: var(--border-light); }
+
+    /* 輸入框 */
+    input, select {
+      background: var(--input-bg) !important;
+      border-color: var(--border) !important;
+      color: var(--text-main) !important;
+    }
+    input::placeholder { color: var(--text-muted); }
+
+    /* 篩選按鈕 */
+    .filter-btn  { background: var(--filter-bg); color: var(--filter-text); border-color: var(--border); }
+    .filter-btn:hover { background: var(--bg-row); }
+    .filter-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+    /* Modal */
+    #modal > div > div { background: var(--modal-bg); }
+    #exportToast { background: var(--toast-bg); }
+
+    /* 深色模式下 card border */
+    html.dark .border-gray-200 { border-color: var(--border); }
+    html.dark .bg-white        { background: var(--bg-card); }
+    html.dark .bg-gray-50      { background: var(--bg-page); }
+    html.dark .bg-gray-100     { background: #1e293b; }
+    html.dark .text-gray-900   { color: var(--text-main); }
+    html.dark .text-gray-700   { color: var(--text-sub); }
+    html.dark .text-gray-600   { color: var(--text-sub); }
+    html.dark .text-gray-500   { color: var(--text-muted); }
+    html.dark .text-gray-400   { color: var(--text-muted); }
+    html.dark .border-gray-300 { border-color: var(--border); }
+    html.dark .border-gray-100 { border-color: var(--border-light); }
+    html.dark .divide-gray-100 > * { border-color: var(--border-light); }
+    html.dark .bg-gray-900     { background: var(--toast-bg); }
+    html.dark .border-b        { border-color: var(--border); }
+
+    /* tag 深色適配 */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 500;
+      margin: 2px 3px 2px 0;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .tag-進攻  { background:#fef9c3; color:#854d0e; border:1px solid #fde68a; }
+    .tag-防守  { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+    .tag-槓桿  { background:#fce7f3; color:#9d174d; border:1px solid #fbcfe8; }
+    .tag-現金  { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+    .tag-無風險{ background:#e0e7ff; color:#4338ca; border:1px solid #c7d2fe; }
+    .tag-ETF   { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+
+    html.dark .tag-進攻  { background:#422006; color:#fde68a; border-color:#92400e; }
+    html.dark .tag-防守  { background:#1e3a5f; color:#93c5fd; border-color:#1d4ed8; }
+    html.dark .tag-槓桿  { background:#4a0728; color:#f9a8d4; border-color:#9d174d; }
+    html.dark .tag-現金  { background:#052e16; color:#86efac; border-color:#15803d; }
+    html.dark .tag-無風險{ background:#1e1b4b; color:#a5b4fc; border-color:#4338ca; }
+    html.dark .tag-ETF   { background:#1e293b; color:#94a3b8; border-color:#334155; }
+
+    .positive { color: #10b981; }
+    .negative { color: #f87171; }
+    .chart-container { position: relative; height: 220px; }
+
+    /* 主題切換按鈕 */
+    #btnTheme {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-sub);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px;
+      transition: background .2s, border-color .2s;
+    }
+    #btnTheme:hover { background: var(--bg-row); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- 頂部 Header -->
+<header class="bg-white border-b border-gray-200 px-6 py-4">
+  <div class="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">資產配置工具</h1>
+      <p id="lastUpdated" class="text-xs text-gray-400 mt-0.5">資料存在你的瀏覽器，不會上傳到任何地方</p>
+    </div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <!-- 匯率設定 -->
+      <div class="flex items-center gap-1.5 text-sm text-gray-600">
+        <span>USD/TWD</span>
+        <input id="fxRate" type="number" step="0.1" value="32.5"
+          class="w-20 border border-gray-300 rounded px-2 py-1 text-sm text-right focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <!-- 更新價格按鈕 -->
+      <button id="btnUpdate"
+        class="flex items-center gap-2 bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-blue-700 active:scale-95 transition">
+        <svg id="spinIcon" class="w-4 h-4 hidden animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+        </svg>
+        <span id="btnLabel">更新價格</span>
+      </button>
+      <!-- 新增資產按鈕 -->
+      <button id="btnAdd"
+        class="border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 active:scale-95 transition">
+        ＋ 新增資產
+      </button>
+      <!-- 匯入 -->
+      <label title="匯入備份 JSON"
+        class="cursor-pointer border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 active:scale-95 transition">
+        📥 匯入
+        <input id="importFile" type="file" accept=".json" class="hidden">
+      </label>
+      <!-- 匯出 -->
+      <button id="btnExport" title="下載備份 JSON"
+        class="border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 active:scale-95 transition">
+        📤 匯出
+      </button>
+      <!-- 深淺主題切換 -->
+      <button id="btnTheme" title="切換深淺主題">🌙</button>
+    </div>
+  </div>
+</header>
+
+<!-- 篩選列 -->
+<div class="bg-white border-b border-gray-100 px-6 py-3">
+  <div class="max-w-7xl mx-auto flex items-center gap-4 flex-wrap text-sm">
+    <span class="text-gray-500 font-medium">篩選：</span>
+    <div class="flex gap-2 flex-wrap" id="filterMarket">
+      <button class="filter-btn active" data-group="market" data-value="">全部市場</button>
+      <button class="filter-btn" data-group="market" data-value="台股">台股</button>
+      <button class="filter-btn" data-group="market" data-value="美股">美股</button>
+      <button class="filter-btn" data-group="market" data-value="現金">現金</button>
+    </div>
+    <div class="h-4 w-px bg-gray-200"></div>
+    <div class="flex gap-2 flex-wrap" id="filterCurrency">
+      <button class="filter-btn active" data-group="currency" data-value="">全部幣別</button>
+      <button class="filter-btn" data-group="currency" data-value="TWD">台幣</button>
+      <button class="filter-btn" data-group="currency" data-value="USD">美元</button>
+    </div>
+    <div class="h-4 w-px bg-gray-200"></div>
+    <div class="flex gap-2 flex-wrap" id="filterTag">
+      <button class="filter-btn active" data-group="tag" data-value="">全部標籤</button>
+    </div>
+    <div class="h-4 w-px bg-gray-200"></div>
+    <div class="flex gap-2 flex-wrap" id="filterAccount">
+      <button class="filter-btn active" data-group="account" data-value="">全部帳戶</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .filter-btn {
+    padding: 3px 12px; border-radius: 9999px; border: 1px solid #e5e7eb;
+    color: #6b7280; background: white; cursor: pointer; transition: all .15s;
+  }
+  .filter-btn:hover { background: #f9fafb; }
+  .filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+</style>
+
+<!-- 主內容 -->
+<main class="max-w-7xl mx-auto px-6 py-6">
+
+  <!-- 總覽卡片 -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="summaryCards">
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-xs text-gray-500 mb-1">總資產（台幣）</p>
+      <p class="text-2xl font-bold text-gray-900" id="totalTWD">—</p>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-xs text-gray-500 mb-1">總成本（台幣）</p>
+      <p class="text-2xl font-bold text-gray-900" id="totalCostTWD">—</p>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-xs text-gray-500 mb-1">未實現損益</p>
+      <p class="text-2xl font-bold" id="totalPnL">—</p>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-xs text-gray-500 mb-1">報酬率</p>
+      <p class="text-2xl font-bold" id="totalReturn">—</p>
+    </div>
+  </div>
+
+  <!-- 圖表區 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-sm font-semibold text-gray-700 mb-3">市場分佈</p>
+      <div class="chart-container"><canvas id="chartMarket"></canvas></div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-sm font-semibold text-gray-700 mb-3">幣別分佈</p>
+      <div class="chart-container"><canvas id="chartCurrency"></canvas></div>
+    </div>
+    <div class="bg-white rounded-xl p-4 border border-gray-200">
+      <p class="text-sm font-semibold text-gray-700 mb-3">風險標籤分佈</p>
+      <div class="chart-container"><canvas id="chartTag"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 資產清單表格 -->
+  <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+      <p class="text-sm font-semibold text-gray-700">資產清單</p>
+      <select id="sortSelect" class="text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none">
+        <option value="value_desc">市值 ↓</option>
+        <option value="value_asc">市值 ↑</option>
+        <option value="return_desc">報酬率 ↓</option>
+        <option value="return_asc">報酬率 ↑</option>
+        <option value="name_asc">名稱 A-Z</option>
+      </select>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+            <th class="text-left px-5 py-3 font-medium">資產</th>
+            <th class="text-left px-4 py-3 font-medium">帳戶</th>
+            <th class="text-right px-4 py-3 font-medium">持有股數</th>
+            <th class="text-right px-4 py-3 font-medium">現價</th>
+            <th class="text-right px-4 py-3 font-medium">市值（台幣）</th>
+            <th class="text-right px-4 py-3 font-medium">成本</th>
+            <th class="text-right px-4 py-3 font-medium">損益</th>
+            <th class="text-right px-4 py-3 font-medium">報酬率</th>
+            <th class="text-right px-4 py-3 font-medium">佔比</th>
+            <th class="text-left px-4 py-3 font-medium">標籤</th>
+            <th class="px-3 py-3 font-medium"></th>
+          </tr>
+        </thead>
+        <tbody id="assetTable" class="divide-y divide-gray-100"></tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- 新增/編輯資產 Modal -->
+<div id="modal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-2xl w-full max-w-md mx-4 p-6 shadow-xl">
+    <h2 class="text-base font-bold text-gray-900 mb-4" id="modalTitle">新增資產</h2>
+    <form id="assetForm" class="space-y-3">
+      <input type="hidden" id="editId">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">名稱</label>
+          <input id="fName" type="text" required placeholder="元大台灣50"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div id="symbolRow">
+          <label class="text-xs text-gray-500 mb-1 block">代碼（留空則不自動更新價格）</label>
+          <input id="fSymbol" type="text" placeholder="0050.TW"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+      </div>
+      <!-- 股票模式 -->
+      <div id="stockFields" class="grid grid-cols-3 gap-3">
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">持有股數</label>
+          <input id="fShares" type="number" step="any" placeholder="100"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">買入成本/股</label>
+          <input id="fCost" type="number" step="any" placeholder="150"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">現價</label>
+          <input id="fPrice" type="number" step="any" placeholder="185.5"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+      </div>
+      <!-- 現金模式 -->
+      <div id="cashFields" class="hidden">
+        <label class="text-xs text-gray-500 mb-1 block">金額</label>
+        <input id="fCashAmount" type="number" step="any" placeholder="200000"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">帳戶（如：國泰、台新、永豐）</label>
+        <input id="fAccount" type="text" placeholder="國泰"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">幣別</label>
+          <select id="fCurrency" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="TWD">台幣 TWD</option>
+            <option value="USD">美元 USD</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-xs text-gray-500 mb-1 block">市場</label>
+          <select id="fMarket" onchange="onMarketChange()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option value="台股">台股</option>
+            <option value="美股">美股</option>
+            <option value="現金">現金</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs text-gray-500 mb-1 block">標籤（用逗號分隔）</label>
+        <input id="fTags" type="text" placeholder="ETF, 防守"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      </div>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" id="btnCancel"
+          class="px-4 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">取消</button>
+        <button type="submit"
+          class="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700">儲存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 空白引導畫面 -->
+<div id="emptyState" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/30">
+  <div class="bg-white rounded-2xl p-8 max-w-sm mx-4 text-center shadow-xl">
+    <div class="text-4xl mb-4">📊</div>
+    <h2 class="text-lg font-bold text-gray-900 mb-2">開始建立你的資產清單</h2>
+    <p class="text-sm text-gray-500 mb-6">資料只存在你的瀏覽器，不會傳到任何地方。<br>可以隨時匯出備份或匯入還原。</p>
+    <button onclick="closeEmpty(); openAdd();"
+      class="w-full bg-blue-600 text-white font-medium py-2.5 rounded-xl hover:bg-blue-700 transition">
+      ＋ 新增第一筆資產
+    </button>
+    <label class="block mt-3 cursor-pointer text-sm text-blue-600 hover:underline">
+      📥 匯入已有的備份
+      <input id="importFileEmpty" type="file" accept=".json" class="hidden">
+    </label>
+  </div>
+</div>
+
+<!-- 提示 toast -->
+<div id="exportToast" class="fixed bottom-6 right-6 bg-gray-900 text-white text-sm px-4 py-3 rounded-xl shadow-lg hidden z-50">
+  <p id="toastMsg">已自動儲存</p>
+</div>
+
+<script>
+// ─── 狀態 ───────────────────────────────────────────
+let allAssets = [];
+let filters = { market: '', currency: '', tag: '', account: '' };
+let sortMode = 'value_desc';
+let charts = {};
+
+const CHART_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16'];
+
+const LS_KEY = 'asset-tool-v1';
+
+// ─── 初始化 ─────────────────────────────────────────
+function init() {
+  const raw = localStorage.getItem(LS_KEY);
+  if (raw) {
+    try {
+      const data = JSON.parse(raw);
+      allAssets = data.assets ?? [];
+      document.getElementById('fxRate').value = data.settings?.usdToTwd ?? 32.5;
+    } catch { allAssets = []; }
+  }
+  if (allAssets.length === 0) {
+    document.getElementById('emptyState').classList.remove('hidden');
+  }
+  render();
+}
+
+function saveToStorage() {
+  const data = { assets: allAssets, settings: { usdToTwd: getFxRate() } };
+  localStorage.setItem(LS_KEY, JSON.stringify(data));
+  showToast('已自動儲存');
+}
+
+function closeEmpty() {
+  document.getElementById('emptyState').classList.add('hidden');
+}
+
+function getFxRate() {
+  return parseFloat(document.getElementById('fxRate').value) || 32.5;
+}
+
+function toTWD(asset) {
+  const val = asset.price * asset.shares;
+  return asset.currency === 'USD' ? val * getFxRate() : val;
+}
+
+function costTWD(asset) {
+  const val = asset.costPerShare * asset.shares;
+  return asset.currency === 'USD' ? val * getFxRate() : val;
+}
+
+// ─── 篩選 ───────────────────────────────────────────
+function getFiltered() {
+  return allAssets.filter(a => {
+    if (filters.market && a.market !== filters.market) return false;
+    if (filters.currency && a.currency !== filters.currency) return false;
+    if (filters.tag && !a.tags.includes(filters.tag)) return false;
+    if (filters.account && a.account !== filters.account) return false;
+    return true;
+  });
+}
+
+function getSorted(assets) {
+  return [...assets].sort((a, b) => {
+    switch (sortMode) {
+      case 'value_asc': return toTWD(a) - toTWD(b);
+      case 'value_desc': return toTWD(b) - toTWD(a);
+      case 'return_asc': return (toTWD(a)-costTWD(a))/costTWD(a) - (toTWD(b)-costTWD(b))/costTWD(b);
+      case 'return_desc': return (toTWD(b)-costTWD(b))/costTWD(b) - (toTWD(a)-costTWD(a))/costTWD(a);
+      case 'name_asc': return a.name.localeCompare(b.name, 'zh');
+      default: return 0;
+    }
+  });
+}
+
+// ─── 渲染 ───────────────────────────────────────────
+function render() {
+  buildTagFilters();
+  const filtered = getSorted(getFiltered());
+  const totalTWD = filtered.reduce((s, a) => s + toTWD(a), 0);
+
+  renderSummary(filtered, totalTWD);
+  renderCharts(filtered, totalTWD);
+  renderTable(filtered, totalTWD);
+  updateLastUpdated();
+}
+
+function renderSummary(assets, totalTWD) {
+  const totalCost = assets.reduce((s, a) => s + costTWD(a), 0);
+  const pnl = totalTWD - totalCost;
+  const ret = totalCost > 0 ? pnl / totalCost : 0;
+
+  document.getElementById('totalTWD').textContent = fmtTWD(totalTWD);
+  document.getElementById('totalCostTWD').textContent = fmtTWD(totalCost);
+  const pnlEl = document.getElementById('totalPnL');
+  pnlEl.textContent = (pnl >= 0 ? '+' : '') + fmtTWD(pnl);
+  pnlEl.className = 'text-2xl font-bold ' + (pnl >= 0 ? 'positive' : 'negative');
+  const retEl = document.getElementById('totalReturn');
+  retEl.textContent = (ret >= 0 ? '+' : '') + (ret * 100).toFixed(2) + '%';
+  retEl.className = 'text-2xl font-bold ' + (ret >= 0 ? 'positive' : 'negative');
+}
+
+function renderCharts(assets, totalTWD) {
+  // 市場分佈
+  const marketMap = {};
+  assets.forEach(a => { marketMap[a.market] = (marketMap[a.market] || 0) + toTWD(a); });
+  renderDonut('chartMarket', marketMap, totalTWD);
+
+  // 幣別分佈
+  const currMap = { '台幣(TWD)': 0, '美元(USD)': 0 };
+  assets.forEach(a => {
+    if (a.currency === 'TWD') currMap['台幣(TWD)'] += toTWD(a);
+    else currMap['美元(USD)'] += toTWD(a);
+  });
+  renderDonut('chartCurrency', currMap, totalTWD);
+
+  // 風險標籤分佈（只取第一個標籤中屬於 進攻/防守/無風險/現金 的）
+  const riskTags = ['進攻', '防守', '無風險', '現金'];
+  const tagMap = {};
+  assets.forEach(a => {
+    const rTag = a.tags.find(t => riskTags.includes(t)) || '其他';
+    tagMap[rTag] = (tagMap[rTag] || 0) + toTWD(a);
+  });
+  renderDonut('chartTag', tagMap, totalTWD);
+}
+
+function renderDonut(id, dataMap, total) {
+  const labels = Object.keys(dataMap);
+  const values = Object.values(dataMap);
+
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels,
+      datasets: [{ data: values, backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: {
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 8 } },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const pct = total > 0 ? (ctx.raw / total * 100).toFixed(1) : 0;
+              return ` ${fmtTWD(ctx.raw)}（${pct}%）`;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderTable(assets, totalTWD) {
+  const tbody = document.getElementById('assetTable');
+  tbody.innerHTML = assets.map(a => {
+    const val = toTWD(a);
+    const cost = costTWD(a);
+    const pnl = val - cost;
+    const ret = cost > 0 ? pnl / cost : 0;
+    const pct = totalTWD > 0 ? (val / totalTWD * 100).toFixed(1) : 0;
+    const priceDisplay = a.currency === 'USD'
+      ? `$${a.price.toFixed(2)}`
+      : `${a.price.toLocaleString('zh-TW', {maximumFractionDigits:2})}`;
+    const sharesDisplay = a.shares === 1 && a.market === '現金'
+      ? '—'
+      : a.shares.toLocaleString();
+
+    return `<tr class="hover:bg-gray-50 transition-colors">
+      <td class="px-5 py-3">
+        <div class="font-medium text-gray-900">${a.name}</div>
+        <div class="text-xs text-gray-400">${a.symbol || a.market} · ${a.currency}</div>
+      </td>
+      <td class="px-4 py-3 text-gray-500 text-sm">${a.account || '—'}</td>
+      <td class="px-4 py-3 text-right text-gray-700">${sharesDisplay}</td>
+      <td class="px-4 py-3 text-right text-gray-700">${priceDisplay}</td>
+      <td class="px-4 py-3 text-right font-medium text-gray-900">${fmtTWD(val)}</td>
+      <td class="px-4 py-3 text-right text-gray-500">${fmtTWD(cost)}</td>
+      <td class="px-4 py-3 text-right ${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${fmtTWD(pnl)}</td>
+      <td class="px-4 py-3 text-right ${ret >= 0 ? 'positive' : 'negative'}">${ret >= 0 ? '+' : ''}${(ret*100).toFixed(2)}%</td>
+      <td class="px-4 py-3 text-right">
+        <div class="flex items-center justify-end gap-2">
+          <div class="w-16 bg-gray-100 rounded-full h-1.5">
+            <div class="bg-blue-500 h-1.5 rounded-full" style="width:${Math.min(pct,100)}%"></div>
+          </div>
+          <span class="text-gray-600 text-xs w-10 text-right">${pct}%</span>
+        </div>
+      </td>
+      <td class="px-4 py-3">
+        ${a.tags.map(t => `<span class="tag tag-${t}">${t}</span>`).join('')}
+      </td>
+      <td class="px-3 py-3 text-right whitespace-nowrap">
+        <button onclick="openEdit('${a.id}')" class="text-gray-400 hover:text-blue-600 text-xs px-2 py-1 rounded hover:bg-blue-50 transition">編輯</button>
+        <button onclick="deleteAsset('${a.id}')" class="text-gray-300 hover:text-red-500 text-xs px-2 py-1 rounded hover:bg-red-50 transition">刪除</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function buildTagFilters() {
+  const tagSet = new Set();
+  allAssets.forEach(a => a.tags.forEach(t => tagSet.add(t)));
+  const tagContainer = document.getElementById('filterTag');
+  const curTag = filters.tag;
+  tagContainer.innerHTML = `<button class="filter-btn ${!curTag ? 'active' : ''}" data-group="tag" data-value="">全部標籤</button>`
+    + [...tagSet].map(t =>
+      `<button class="filter-btn ${curTag === t ? 'active' : ''}" data-group="tag" data-value="${t}">${t}</button>`
+    ).join('');
+
+  const accountSet = new Set(allAssets.map(a => a.account).filter(Boolean));
+  const accContainer = document.getElementById('filterAccount');
+  const curAcc = filters.account;
+  accContainer.innerHTML = `<button class="filter-btn ${!curAcc ? 'active' : ''}" data-group="account" data-value="">全部帳戶</button>`
+    + [...accountSet].map(ac =>
+      `<button class="filter-btn ${curAcc === ac ? 'active' : ''}" data-group="account" data-value="${ac}">${ac}</button>`
+    ).join('');
+
+  bindFilterButtons();
+}
+
+function updateLastUpdated() {
+  const dates = allAssets.filter(a => a.updatedAt).map(a => a.updatedAt).sort().reverse();
+  if (dates.length) {
+    document.getElementById('lastUpdated').textContent = `價格更新：${dates[0]}`;
+  }
+}
+
+// ─── 事件綁定 ────────────────────────────────────────
+function bindFilterButtons() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.onclick = () => {
+      const group = btn.dataset.group;
+      const value = btn.dataset.value;
+      filters[group] = value;
+      document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    };
+  });
+}
+
+document.getElementById('sortSelect').onchange = e => { sortMode = e.target.value; render(); };
+document.getElementById('fxRate').oninput = () => render();
+document.getElementById('btnAdd').onclick = () => openAdd();
+document.getElementById('btnCancel').onclick = closeModal;
+document.getElementById('assetForm').onsubmit = saveAsset;
+
+// ─── 更新價格 ────────────────────────────────────────
+document.getElementById('btnUpdate').onclick = async () => {
+  const btn = document.getElementById('btnUpdate');
+  const spin = document.getElementById('spinIcon');
+  const label = document.getElementById('btnLabel');
+  btn.disabled = true;
+  spin.classList.remove('hidden');
+  label.textContent = '更新中…';
+
+  const symbols = allAssets.filter(a => a.symbol);
+  let updated = 0;
+
+  await Promise.allSettled(symbols.map(async (asset) => {
+    try {
+      const price = await fetchPrice(asset.symbol);
+      if (price && price > 0) {
+        asset.price = price;
+        asset.updatedAt = new Date().toISOString().split('T')[0];
+        updated++;
+      }
+    } catch (e) {
+      console.warn(`無法更新 ${asset.symbol}:`, e);
+    }
+  }));
+
+  render();
+  saveToStorage();
+
+  btn.disabled = false;
+  spin.classList.add('hidden');
+  label.textContent = '更新價格';
+  showToast(`已更新 ${updated}/${symbols.length} 筆價格`);
+};
+
+async function fetchPrice(symbol) {
+  // Yahoo Finance 公開 endpoint（無需 key，支援台股 .TW 和美股）
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=1d`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('fetch failed');
+  const json = await res.json();
+  const meta = json?.chart?.result?.[0]?.meta;
+  return meta?.regularMarketPrice ?? null;
+}
+
+// ─── 新增 / 編輯 Modal ───────────────────────────────
+function onMarketChange() {
+  const isCash = document.getElementById('fMarket').value === '現金';
+  document.getElementById('stockFields').classList.toggle('hidden', isCash);
+  document.getElementById('cashFields').classList.toggle('hidden', !isCash);
+  document.getElementById('symbolRow').classList.toggle('hidden', isCash);
+  document.getElementById('fShares').required = !isCash;
+  document.getElementById('fCost').required = !isCash;
+  document.getElementById('fCashAmount').required = isCash;
+}
+
+function openAdd() {
+  document.getElementById('modalTitle').textContent = '新增資產';
+  document.getElementById('assetForm').reset();
+  document.getElementById('editId').value = '';
+  document.getElementById('fMarket').value = '台股';
+  onMarketChange();
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function openEdit(id) {
+  const asset = allAssets.find(a => a.id === id);
+  if (!asset) return;
+  document.getElementById('modalTitle').textContent = '編輯資產';
+  document.getElementById('editId').value = id;
+  document.getElementById('fName').value = asset.name;
+  document.getElementById('fSymbol').value = asset.symbol;
+  document.getElementById('fCurrency').value = asset.currency;
+  document.getElementById('fMarket').value = asset.market;
+  document.getElementById('fAccount').value = asset.account || '';
+  document.getElementById('fTags').value = asset.tags.join(', ');
+  onMarketChange();
+  if (asset.market === '現金') {
+    document.getElementById('fCashAmount').value = asset.price * asset.shares;
+  } else {
+    document.getElementById('fShares').value = asset.shares;
+    document.getElementById('fCost').value = asset.costPerShare;
+    document.getElementById('fPrice').value = asset.price;
+  }
+  document.getElementById('modal').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.add('hidden');
+}
+
+function saveAsset(e) {
+  e.preventDefault();
+  const id = document.getElementById('editId').value;
+  const market = document.getElementById('fMarket').value;
+  const isCash = market === '現金';
+  const cashAmount = parseFloat(document.getElementById('fCashAmount').value) || 0;
+  const asset = {
+    name: document.getElementById('fName').value.trim(),
+    symbol: isCash ? '' : document.getElementById('fSymbol').value.trim(),
+    shares: isCash ? 1 : parseFloat(document.getElementById('fShares').value),
+    costPerShare: isCash ? cashAmount : parseFloat(document.getElementById('fCost').value),
+    price: isCash ? cashAmount : (parseFloat(document.getElementById('fPrice').value) || 0),
+    currency: document.getElementById('fCurrency').value,
+    market,
+    account: document.getElementById('fAccount').value.trim(),
+    tags: isCash
+      ? (document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean).length
+          ? document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean)
+          : ['現金', '無風險'])
+      : document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean),
+    updatedAt: new Date().toISOString().split('T')[0]
+  };
+
+  if (id) {
+    const idx = allAssets.findIndex(a => a.id === id);
+    if (idx >= 0) allAssets[idx] = { ...allAssets[idx], ...asset };
+  } else {
+    asset.id = String(Date.now());
+    allAssets.push(asset);
+  }
+
+  closeModal();
+  render();
+  saveToStorage();
+}
+
+// ─── 匯出備份 ────────────────────────────────────────
+function exportJSON() {
+  const data = JSON.stringify({ assets: allAssets, settings: { usdToTwd: getFxRate() } }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `assets-backup-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── 匯入備份 ────────────────────────────────────────
+function handleImport(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data.assets)) throw new Error('格式錯誤');
+      allAssets = data.assets;
+      if (data.settings?.usdToTwd) document.getElementById('fxRate').value = data.settings.usdToTwd;
+      saveToStorage();
+      closeEmpty();
+      render();
+      showToast(`匯入成功，共 ${allAssets.length} 筆資產`);
+    } catch {
+      showToast('匯入失敗，請確認檔案格式正確');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ─── 刪除資產 ────────────────────────────────────────
+function deleteAsset(id) {
+  if (!confirm('確定刪除這筆資產？')) return;
+  allAssets = allAssets.filter(a => a.id !== id);
+  render();
+  saveToStorage();
+}
+
+// ─── 工具 ────────────────────────────────────────────
+function fmtTWD(n) {
+  if (Math.abs(n) >= 10000) {
+    return (n / 10000).toFixed(1) + ' 萬';
+  }
+  return n.toLocaleString('zh-TW', { maximumFractionDigits: 0 });
+}
+
+function showToast(msg) {
+  const el = document.getElementById('exportToast');
+  document.getElementById('toastMsg').textContent = msg;
+  el.classList.remove('hidden');
+  setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// ─── 匯入/匯出事件 ───────────────────────────────────
+document.getElementById('btnExport').onclick = exportJSON;
+document.getElementById('importFile').onchange = e => handleImport(e.target.files[0]);
+document.getElementById('importFileEmpty').onchange = e => handleImport(e.target.files[0]);
+
+// ─── 深淺主題 ────────────────────────────────────────
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  document.getElementById('btnTheme').textContent = dark ? '☀️' : '🌙';
+  // Chart.js 圖表文字顏色跟著換
+  Chart.defaults.color = dark ? '#94a3b8' : '#6b7280';
+  if (Object.keys(charts).length) render();
+}
+
+document.getElementById('btnTheme').onclick = () => {
+  const isDark = document.documentElement.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  applyTheme(!isDark);
+};
+
+// 讀取上次選擇
+const savedTheme = localStorage.getItem('theme');
+applyTheme(savedTheme === 'dark');
+
+// ─── 啟動 ────────────────────────────────────────────
+bindFilterButtons();
+init();
+</script>
+
+</body>
+</html>
