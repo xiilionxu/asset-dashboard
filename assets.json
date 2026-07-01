@@ -107,6 +107,42 @@
       "shares": 1, "costPerShare": 1806.23, "price": 1806.23,
       "currency": "USD", "market": "現金", "account": "嘉信",
       "tags": ["現金", "無風險"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "f001", "name": "iShares Morningstar Growth ETF", "symbol": "IWY",
+      "shares": 22, "costPerShare": 225.71727, "price": 289.28,
+      "currency": "USD", "market": "美股", "account": "FT",
+      "tags": ["ETF", "美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "f002", "name": "iShares Preferred & Income Securities ETF", "symbol": "PFF",
+      "shares": 160, "costPerShare": 32.6625, "price": 30.53,
+      "currency": "USD", "market": "美股", "account": "FT",
+      "tags": ["ETF", "美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "f003", "name": "Invesco S&P 500 Equal Weight ETF", "symbol": "RSP",
+      "shares": 26, "costPerShare": 188.68923, "price": 214.38,
+      "currency": "USD", "market": "美股", "account": "FT",
+      "tags": ["ETF", "美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "f004", "name": "Invesco S&P 500 Momentum ETF", "symbol": "SPMO",
+      "shares": 45, "costPerShare": 115.35, "price": 156.17,
+      "currency": "USD", "market": "美股", "account": "FT",
+      "tags": ["ETF", "美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "f005", "name": "Vanguard Real Estate ETF", "symbol": "VNQ",
+      "shares": 53, "costPerShare": 92.7617, "price": 96.79,
+      "currency": "USD", "market": "美股", "account": "FT",
+      "tags": ["ETF", "美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "c002", "name": "美元現金（FT）", "symbol": "",
+      "shares": 1, "costPerShare": 5031.16, "price": 5031.16,
+      "currency": "USD", "market": "現金", "account": "FT",
+      "tags": ["現金", "無風險"], "updatedAt": "2026-07-01"
     }
   ],
   "settings": {
