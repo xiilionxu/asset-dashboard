@@ -105,6 +105,8 @@
     .tag-現金  { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
     .tag-無風險{ background:#e0e7ff; color:#4338ca; border:1px solid #c7d2fe; }
     .tag-ETF   { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+    .tag-負債  { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; }
+    .tag-特別股{ background:#faf5ff; color:#7e22ce; border:1px solid #e9d5ff; }
 
     html.dark .tag-進攻  { background:#422006; color:#fde68a; border-color:#92400e; }
     html.dark .tag-防守  { background:#1e3a5f; color:#93c5fd; border-color:#1d4ed8; }
@@ -112,6 +114,10 @@
     html.dark .tag-現金  { background:#052e16; color:#86efac; border-color:#15803d; }
     html.dark .tag-無風險{ background:#1e1b4b; color:#a5b4fc; border-color:#4338ca; }
     html.dark .tag-ETF   { background:#1e293b; color:#94a3b8; border-color:#334155; }
+    html.dark .tag-負債  { background:#450a0a; color:#fca5a5; border-color:#b91c1c; }
+    html.dark .tag-特別股{ background:#2e1065; color:#d8b4fe; border-color:#7e22ce; }
+    tr.liability-row td  { color: #dc2626; }
+    html.dark tr.liability-row td { color: #f87171; }
 
     .positive { color: #10b981; }
     .negative { color: #f87171; }
@@ -171,10 +177,11 @@
   <div class="max-w-7xl mx-auto flex items-center gap-4 flex-wrap text-sm">
     <span class="text-gray-500 font-medium">篩選：</span>
     <div class="flex gap-2 flex-wrap" id="filterMarket">
-      <button class="filter-btn active" data-group="market" data-value="">全部市場</button>
+      <button class="filter-btn active" data-group="market" data-value="">總資產</button>
       <button class="filter-btn" data-group="market" data-value="台股">台股</button>
       <button class="filter-btn" data-group="market" data-value="美股">美股</button>
       <button class="filter-btn" data-group="market" data-value="現金">現金</button>
+      <button class="filter-btn" data-group="market" data-value="負債">負債</button>
     </div>
     <div class="h-4 w-px bg-gray-200"></div>
     <div class="flex gap-2 flex-wrap" id="filterCurrency">
@@ -208,15 +215,15 @@
   <!-- 總覽卡片 -->
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" id="summaryCards">
     <div class="bg-white rounded-xl p-4 border border-gray-200">
-      <p class="text-xs text-gray-500 mb-1">總資產（台幣）</p>
+      <p class="text-xs text-gray-500 mb-1" id="card1Label">總資產（台幣）</p>
       <p class="text-2xl font-bold text-gray-900" id="totalTWD">—</p>
     </div>
     <div class="bg-white rounded-xl p-4 border border-gray-200">
-      <p class="text-xs text-gray-500 mb-1">總成本（台幣）</p>
+      <p class="text-xs text-gray-500 mb-1" id="card2Label">總成本（台幣）</p>
       <p class="text-2xl font-bold text-gray-900" id="totalCostTWD">—</p>
     </div>
     <div class="bg-white rounded-xl p-4 border border-gray-200">
-      <p class="text-xs text-gray-500 mb-1">未實現損益</p>
+      <p class="text-xs text-gray-500 mb-1" id="card3Label">未實現損益</p>
       <p class="text-2xl font-bold" id="totalPnL">—</p>
     </div>
     <div class="bg-white rounded-xl p-4 border border-gray-200">
@@ -338,6 +345,7 @@
             <option value="台股">台股</option>
             <option value="美股">美股</option>
             <option value="現金">現金</option>
+            <option value="負債">負債</option>
           </select>
         </div>
       </div>
@@ -430,47 +438,92 @@ function render() {
 }
 
 function renderSummary(assets, totalTWD) {
-  const totalCost = assets.reduce((s, a) => s + costTWD(a), 0);
-  const pnl = totalTWD - totalCost;
-  const ret = totalCost > 0 ? pnl / totalCost : 0;
+  const liabilities = assets.filter(a => a.market === '負債');
+  const regularAssets = assets.filter(a => a.market !== '負債');
+  const isAllView = !filters.market;
+  const hasLiabilities = liabilities.length > 0;
 
-  document.getElementById('totalTWD').textContent = fmtTWD(totalTWD);
-  document.getElementById('totalCostTWD').textContent = fmtTWD(totalCost);
-  const pnlEl = document.getElementById('totalPnL');
-  pnlEl.textContent = (pnl >= 0 ? '+' : '') + fmtTWD(pnl);
-  pnlEl.className = 'text-2xl font-bold ' + (pnl >= 0 ? 'positive' : 'negative');
-  const retEl = document.getElementById('totalReturn');
-  retEl.textContent = (ret >= 0 ? '+' : '') + (ret * 100).toFixed(2) + '%';
-  retEl.className = 'text-2xl font-bold ' + (ret >= 0 ? 'positive' : 'negative');
+  if (isAllView && hasLiabilities) {
+    const assetsTWD = regularAssets.reduce((s, a) => s + toTWD(a), 0);
+    const liabilityTWD = liabilities.reduce((s, a) => s + toTWD(a), 0);
+    const netTWD = assetsTWD - liabilityTWD;
+    const totalCost = regularAssets.reduce((s, a) => s + costTWD(a), 0);
+    const pnl = assetsTWD - totalCost;
+    const ret = totalCost > 0 ? pnl / totalCost : 0;
+
+    document.getElementById('card1Label').textContent = '淨資產（台幣）';
+    document.getElementById('totalTWD').textContent = fmtTWD(netTWD);
+    document.getElementById('totalTWD').className = 'text-2xl font-bold ' + (netTWD >= 0 ? 'text-gray-900' : 'negative');
+    document.getElementById('card2Label').textContent = '總資產（台幣）';
+    document.getElementById('totalCostTWD').textContent = fmtTWD(assetsTWD);
+    document.getElementById('card3Label').textContent = '負債';
+    const pnlEl = document.getElementById('totalPnL');
+    pnlEl.textContent = '-' + fmtTWD(liabilityTWD);
+    pnlEl.className = 'text-2xl font-bold negative';
+    const retEl = document.getElementById('totalReturn');
+    retEl.textContent = (ret >= 0 ? '+' : '') + (ret * 100).toFixed(2) + '%';
+    retEl.className = 'text-2xl font-bold ' + (ret >= 0 ? 'positive' : 'negative');
+  } else {
+    const displayAssets = filters.market === '負債' ? liabilities : regularAssets;
+    const displayTWD = displayAssets.reduce((s, a) => s + toTWD(a), 0);
+    const totalCost = displayAssets.reduce((s, a) => s + costTWD(a), 0);
+    const pnl = displayTWD - totalCost;
+    const ret = totalCost > 0 ? pnl / totalCost : 0;
+
+    document.getElementById('card1Label').textContent = filters.market === '負債' ? '負債合計（台幣）' : '總資產（台幣）';
+    document.getElementById('totalTWD').textContent = fmtTWD(displayTWD);
+    document.getElementById('totalTWD').className = 'text-2xl font-bold text-gray-900';
+    document.getElementById('card2Label').textContent = '總成本（台幣）';
+    document.getElementById('totalCostTWD').textContent = fmtTWD(totalCost);
+    document.getElementById('card3Label').textContent = '未實現損益';
+    const pnlEl = document.getElementById('totalPnL');
+    pnlEl.textContent = (pnl >= 0 ? '+' : '') + fmtTWD(pnl);
+    pnlEl.className = 'text-2xl font-bold ' + (pnl >= 0 ? 'positive' : 'negative');
+    const retEl = document.getElementById('totalReturn');
+    retEl.textContent = (ret >= 0 ? '+' : '') + (ret * 100).toFixed(2) + '%';
+    retEl.className = 'text-2xl font-bold ' + (ret >= 0 ? 'positive' : 'negative');
+  }
 }
 
 function renderCharts(assets, totalTWD) {
+  const isAllView = !filters.market;
+  // 總資產視圖：包含負債；其他視圖：排除負債
+  const chartAssets = isAllView ? assets : assets.filter(a => a.market !== '負債');
+  const chartTotal = chartAssets.reduce((s, a) => s + toTWD(a), 0);
+
   // 市場分佈
   const marketMap = {};
-  assets.forEach(a => { marketMap[a.market] = (marketMap[a.market] || 0) + toTWD(a); });
-  renderDonut('chartMarket', marketMap, totalTWD);
+  chartAssets.forEach(a => { marketMap[a.market] = (marketMap[a.market] || 0) + toTWD(a); });
+  // 負債指定紅色
+  const marketColors = Object.keys(marketMap).map(k =>
+    k === '負債' ? '#ef4444' : CHART_COLORS[Object.keys(marketMap).indexOf(k) % CHART_COLORS.length]
+  );
+  renderDonut('chartMarket', marketMap, chartTotal, marketColors);
 
-  // 幣別分佈
+  // 幣別分佈（排除負債）
+  const regularAssets = chartAssets.filter(a => a.market !== '負債');
+  const regularTotal = regularAssets.reduce((s, a) => s + toTWD(a), 0);
   const currMap = { '台幣(TWD)': 0, '美元(USD)': 0 };
-  assets.forEach(a => {
+  regularAssets.forEach(a => {
     if (a.currency === 'TWD') currMap['台幣(TWD)'] += toTWD(a);
     else currMap['美元(USD)'] += toTWD(a);
   });
-  renderDonut('chartCurrency', currMap, totalTWD);
+  renderDonut('chartCurrency', currMap, regularTotal);
 
-  // 風險標籤分佈（只取第一個標籤中屬於 進攻/防守/無風險/現金 的）
+  // 風險標籤分佈（排除負債）
   const riskTags = ['進攻', '防守', '無風險', '現金'];
   const tagMap = {};
-  assets.forEach(a => {
+  regularAssets.forEach(a => {
     const rTag = a.tags.find(t => riskTags.includes(t)) || '其他';
     tagMap[rTag] = (tagMap[rTag] || 0) + toTWD(a);
   });
-  renderDonut('chartTag', tagMap, totalTWD);
+  renderDonut('chartTag', tagMap, regularTotal);
 }
 
-function renderDonut(id, dataMap, total) {
+function renderDonut(id, dataMap, total, colors) {
   const labels = Object.keys(dataMap);
   const values = Object.values(dataMap);
+  const bgColors = colors || labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
   if (charts[id]) charts[id].destroy();
   const ctx = document.getElementById(id).getContext('2d');
@@ -478,7 +531,7 @@ function renderDonut(id, dataMap, total) {
     type: 'doughnut',
     data: {
       labels,
-      datasets: [{ data: values, backgroundColor: CHART_COLORS, borderWidth: 2, borderColor: '#fff' }]
+      datasets: [{ data: values, backgroundColor: bgColors, borderWidth: 2, borderColor: '#fff' }]
     },
     options: {
       cutout: '65%',
@@ -512,9 +565,10 @@ function renderTable(assets, totalTWD) {
       ? '—'
       : a.shares.toLocaleString();
 
-    return `<tr class="hover:bg-gray-50 transition-colors">
+    const isLiability = a.market === '負債';
+    return `<tr class="hover:bg-gray-50 transition-colors${isLiability ? ' liability-row' : ''}">
       <td class="px-5 py-3">
-        <div class="font-medium text-gray-900">${a.name}</div>
+        <div class="font-medium ${isLiability ? '' : 'text-gray-900'}">${a.name}</div>
         <div class="text-xs text-gray-400">${a.symbol || a.market} · ${a.currency}</div>
       </td>
       <td class="px-4 py-3 text-gray-500 text-sm">${a.account || '—'}</td>
@@ -634,13 +688,16 @@ async function fetchPrice(symbol) {
 
 // ─── 新增 / 編輯 Modal ───────────────────────────────
 function onMarketChange() {
-  const isCash = document.getElementById('fMarket').value === '現金';
-  document.getElementById('stockFields').classList.toggle('hidden', isCash);
-  document.getElementById('cashFields').classList.toggle('hidden', !isCash);
-  document.getElementById('symbolRow').classList.toggle('hidden', isCash);
-  document.getElementById('fShares').required = !isCash;
-  document.getElementById('fCost').required = !isCash;
-  document.getElementById('fCashAmount').required = isCash;
+  const market = document.getElementById('fMarket').value;
+  const isSimple = market === '現金' || market === '負債';
+  document.getElementById('stockFields').classList.toggle('hidden', isSimple);
+  document.getElementById('cashFields').classList.toggle('hidden', !isSimple);
+  document.getElementById('symbolRow').classList.toggle('hidden', isSimple);
+  document.getElementById('fShares').required = !isSimple;
+  document.getElementById('fCost').required = !isSimple;
+  document.getElementById('fCashAmount').required = isSimple;
+  // 負債模式下，金額 label 顯示「貸款金額」
+  document.querySelector('#cashFields label').textContent = market === '負債' ? '貸款金額' : '金額';
 }
 
 function openAdd() {
@@ -664,7 +721,7 @@ function openEdit(id) {
   document.getElementById('fAccount').value = asset.account || '';
   document.getElementById('fTags').value = asset.tags.join(', ');
   onMarketChange();
-  if (asset.market === '現金') {
+  if (asset.market === '現金' || asset.market === '負債') {
     document.getElementById('fCashAmount').value = asset.price * asset.shares;
   } else {
     document.getElementById('fShares').value = asset.shares;
@@ -682,21 +739,22 @@ function saveAsset(e) {
   e.preventDefault();
   const id = document.getElementById('editId').value;
   const market = document.getElementById('fMarket').value;
-  const isCash = market === '現金';
-  const cashAmount = parseFloat(document.getElementById('fCashAmount').value) || 0;
+  const isSimple = market === '現金' || market === '負債';
+  const simpleAmount = parseFloat(document.getElementById('fCashAmount').value) || 0;
+  const defaultTags = market === '負債' ? ['負債'] : ['現金', '無風險'];
   const asset = {
     name: document.getElementById('fName').value.trim(),
-    symbol: isCash ? '' : document.getElementById('fSymbol').value.trim(),
-    shares: isCash ? 1 : parseFloat(document.getElementById('fShares').value),
-    costPerShare: isCash ? cashAmount : parseFloat(document.getElementById('fCost').value),
-    price: isCash ? cashAmount : (parseFloat(document.getElementById('fPrice').value) || 0),
+    symbol: isSimple ? '' : document.getElementById('fSymbol').value.trim(),
+    shares: isSimple ? 1 : parseFloat(document.getElementById('fShares').value),
+    costPerShare: isSimple ? simpleAmount : parseFloat(document.getElementById('fCost').value),
+    price: isSimple ? simpleAmount : (parseFloat(document.getElementById('fPrice').value) || 0),
     currency: document.getElementById('fCurrency').value,
     market,
     account: document.getElementById('fAccount').value.trim(),
-    tags: isCash
+    tags: isSimple
       ? (document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean).length
           ? document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean)
-          : ['現金', '無風險'])
+          : defaultTags)
       : document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean),
     updatedAt: new Date().toISOString().split('T')[0]
   };
