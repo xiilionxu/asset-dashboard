@@ -89,13 +89,29 @@
     html.dark .border-b        { border-color: var(--border); }
 
     /* tag 深色適配 */
-    .tag { @apply inline-block px-2 py-0.5 rounded-full text-xs font-medium mr-1; }
-    .tag-進攻 { background:#fef3c7; color:#92400e; }
-    .tag-防守 { background:#dbeafe; color:#1e40af; }
-    .tag-槓桿 { background:#fce7f3; color:#9d174d; }
-    .tag-現金 { background:#d1fae5; color:#065f46; }
-    .tag-無風險 { background:#e0e7ff; color:#3730a3; }
-    .tag-ETF   { background:#f3f4f6; color:#374151; }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 500;
+      margin: 2px 3px 2px 0;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+    .tag-進攻  { background:#fef9c3; color:#854d0e; border:1px solid #fde68a; }
+    .tag-防守  { background:#dbeafe; color:#1d4ed8; border:1px solid #bfdbfe; }
+    .tag-槓桿  { background:#fce7f3; color:#9d174d; border:1px solid #fbcfe8; }
+    .tag-現金  { background:#dcfce7; color:#15803d; border:1px solid #bbf7d0; }
+    .tag-無風險{ background:#e0e7ff; color:#4338ca; border:1px solid #c7d2fe; }
+    .tag-ETF   { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+
+    html.dark .tag-進攻  { background:#422006; color:#fde68a; border-color:#92400e; }
+    html.dark .tag-防守  { background:#1e3a5f; color:#93c5fd; border-color:#1d4ed8; }
+    html.dark .tag-槓桿  { background:#4a0728; color:#f9a8d4; border-color:#9d174d; }
+    html.dark .tag-現金  { background:#052e16; color:#86efac; border-color:#15803d; }
+    html.dark .tag-無風險{ background:#1e1b4b; color:#a5b4fc; border-color:#4338ca; }
+    html.dark .tag-ETF   { background:#1e293b; color:#94a3b8; border-color:#334155; }
 
     .positive { color: #10b981; }
     .negative { color: #f87171; }
