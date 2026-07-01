@@ -180,7 +180,6 @@
       <button class="filter-btn active" data-group="market" data-value="">總資產</button>
       <button class="filter-btn" data-group="market" data-value="台股">台股</button>
       <button class="filter-btn" data-group="market" data-value="美股">美股</button>
-      <button class="filter-btn" data-group="market" data-value="現金">現金</button>
       <button class="filter-btn" data-group="market" data-value="負債">負債</button>
     </div>
     <div class="h-4 w-px bg-gray-200"></div>
@@ -341,13 +340,17 @@
         </div>
         <div>
           <label class="text-xs text-gray-500 mb-1 block">市場</label>
-          <select id="fMarket" onchange="onMarketChange()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <select id="fMarket" onchange="onFormModeChange()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
             <option value="台股">台股</option>
             <option value="美股">美股</option>
-            <option value="現金">現金</option>
             <option value="負債">負債</option>
           </select>
         </div>
+      </div>
+      <!-- 現金勾選（負債時隱藏） -->
+      <div id="cashCheckRow" class="flex items-center gap-2">
+        <input type="checkbox" id="fIsCash" onchange="onFormModeChange()" class="w-4 h-4 accent-blue-600">
+        <label for="fIsCash" class="text-sm text-gray-600 cursor-pointer">這是現金部位（不填股數/現價）</label>
       </div>
       <div>
         <label class="text-xs text-gray-500 mb-1 block">標籤（用逗號分隔）</label>
@@ -491,14 +494,10 @@ function renderCharts(assets, totalTWD) {
   const chartAssets = isAllView ? assets : assets.filter(a => a.market !== '負債');
   const chartTotal = chartAssets.reduce((s, a) => s + toTWD(a), 0);
 
-  // 市場分佈（固定配色，現金依幣別拆分）
-  const MARKET_COLORS = { '台股': '#10b981', '美股': '#3b82f6', '台幣現金': '#f59e0b', '美元現金': '#f97316', '負債': '#ef4444' };
+  // 市場分佈（固定配色）
+  const MARKET_COLORS = { '台股': '#10b981', '美股': '#3b82f6', '負債': '#ef4444' };
   const marketMap = {};
-  chartAssets.forEach(a => {
-    let key = a.market;
-    if (a.market === '現金') key = a.currency === 'USD' ? '美元現金' : '台幣現金';
-    marketMap[key] = (marketMap[key] || 0) + toTWD(a);
-  });
+  chartAssets.forEach(a => { marketMap[a.market] = (marketMap[a.market] || 0) + toTWD(a); });
   const marketColors = Object.keys(marketMap).map(k => MARKET_COLORS[k] || '#8b5cf6');
   renderDonut('chartMarket', marketMap, chartTotal, marketColors);
 
@@ -563,9 +562,8 @@ function renderTable(assets, totalTWD) {
     const priceDisplay = a.currency === 'USD'
       ? `$${a.price.toFixed(2)}`
       : `${a.price.toLocaleString('zh-TW', {maximumFractionDigits:2})}`;
-    const sharesDisplay = a.shares === 1 && a.market === '現金'
-      ? '—'
-      : a.shares.toLocaleString();
+    const isCashAsset = a.tags.includes('現金') || (a.symbol === '' && a.market !== '負債');
+    const sharesDisplay = isCashAsset ? '—' : a.shares.toLocaleString();
 
     const isLiability = a.market === '負債';
     return `<tr class="hover:bg-gray-50 transition-colors${isLiability ? ' liability-row' : ''}">
@@ -689,17 +687,22 @@ async function fetchPrice(symbol) {
 }
 
 // ─── 新增 / 編輯 Modal ───────────────────────────────
-function onMarketChange() {
+function onFormModeChange() {
   const market = document.getElementById('fMarket').value;
-  const isSimple = market === '現金' || market === '負債';
+  const isLiability = market === '負債';
+  const isCashChecked = document.getElementById('fIsCash').checked;
+  const isSimple = isLiability || isCashChecked;
+
+  document.getElementById('cashCheckRow').classList.toggle('hidden', isLiability);
+  if (isLiability) document.getElementById('fIsCash').checked = false;
+
   document.getElementById('stockFields').classList.toggle('hidden', isSimple);
   document.getElementById('cashFields').classList.toggle('hidden', !isSimple);
   document.getElementById('symbolRow').classList.toggle('hidden', isSimple);
   document.getElementById('fShares').required = !isSimple;
   document.getElementById('fCost').required = !isSimple;
   document.getElementById('fCashAmount').required = isSimple;
-  // 負債模式下，金額 label 顯示「貸款金額」
-  document.querySelector('#cashFields label').textContent = market === '負債' ? '貸款金額' : '金額';
+  document.querySelector('#cashFields label').textContent = isLiability ? '貸款金額' : '金額';
 }
 
 function openAdd() {
@@ -707,7 +710,8 @@ function openAdd() {
   document.getElementById('assetForm').reset();
   document.getElementById('editId').value = '';
   document.getElementById('fMarket').value = '台股';
-  onMarketChange();
+  document.getElementById('fIsCash').checked = false;
+  onFormModeChange();
   document.getElementById('modal').classList.remove('hidden');
 }
 
@@ -722,8 +726,10 @@ function openEdit(id) {
   document.getElementById('fMarket').value = asset.market;
   document.getElementById('fAccount').value = asset.account || '';
   document.getElementById('fTags').value = asset.tags.join(', ');
-  onMarketChange();
-  if (asset.market === '現金' || asset.market === '負債') {
+  const assetIsCash = asset.tags.includes('現金') || (asset.symbol === '' && asset.market !== '負債');
+  document.getElementById('fIsCash').checked = assetIsCash;
+  onFormModeChange();
+  if (assetIsCash || asset.market === '負債') {
     document.getElementById('fCashAmount').value = asset.price * asset.shares;
   } else {
     document.getElementById('fShares').value = asset.shares;
@@ -741,9 +747,11 @@ function saveAsset(e) {
   e.preventDefault();
   const id = document.getElementById('editId').value;
   const market = document.getElementById('fMarket').value;
-  const isSimple = market === '現金' || market === '負債';
+  const isLiability = market === '負債';
+  const isCash = document.getElementById('fIsCash').checked;
+  const isSimple = isLiability || isCash;
   const simpleAmount = parseFloat(document.getElementById('fCashAmount').value) || 0;
-  const defaultTags = market === '負債' ? ['負債'] : ['現金', '無風險'];
+  const defaultTags = isLiability ? ['負債'] : ['現金', '無風險'];
   const asset = {
     name: document.getElementById('fName').value.trim(),
     symbol: isSimple ? '' : document.getElementById('fSymbol').value.trim(),

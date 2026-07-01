@@ -266,7 +266,7 @@
       "costPerShare": 1806.23,
       "price": 1806.23,
       "currency": "USD",
-      "market": "現金",
+      "market": "美股",
       "account": "嘉信",
       "tags": [
         "現金",
@@ -362,7 +362,7 @@
       "costPerShare": 5031.16,
       "price": 5031.16,
       "currency": "USD",
-      "market": "現金",
+      "market": "美股",
       "account": "FT",
       "tags": [
         "現金",
@@ -646,34 +646,81 @@
       "id": "1782919492613"
     },
     {
-      "id": "d002", "name": "貸款（第一）", "symbol": "",
-      "shares": 1, "costPerShare": 72206, "price": 72206,
-      "currency": "TWD", "market": "負債", "account": "第一",
-      "tags": ["負債"], "updatedAt": "2026-07-01"
+      "id": "d002",
+      "name": "貸款（第一）",
+      "symbol": "",
+      "shares": 1,
+      "costPerShare": 72206,
+      "price": 72206,
+      "currency": "TWD",
+      "market": "負債",
+      "account": "第一",
+      "tags": [
+        "負債"
+      ],
+      "updatedAt": "2026-07-01"
     },
     {
-      "id": "d003", "name": "貸款（兆豐）", "symbol": "",
-      "shares": 1, "costPerShare": 180336, "price": 180336,
-      "currency": "TWD", "market": "負債", "account": "兆豐",
-      "tags": ["負債"], "updatedAt": "2026-07-01"
+      "id": "d003",
+      "name": "貸款（兆豐）",
+      "symbol": "",
+      "shares": 1,
+      "costPerShare": 180336,
+      "price": 180336,
+      "currency": "TWD",
+      "market": "負債",
+      "account": "兆豐",
+      "tags": [
+        "負債"
+      ],
+      "updatedAt": "2026-07-01"
     },
     {
-      "id": "d001", "name": "貸款（台新）", "symbol": "",
-      "shares": 1, "costPerShare": 804465, "price": 804465,
-      "currency": "TWD", "market": "負債", "account": "台新",
-      "tags": ["負債"], "updatedAt": "2026-07-01"
+      "id": "d001",
+      "name": "貸款（台新）",
+      "symbol": "",
+      "shares": 1,
+      "costPerShare": 804465,
+      "price": 804465,
+      "currency": "TWD",
+      "market": "負債",
+      "account": "台新",
+      "tags": [
+        "負債"
+      ],
+      "updatedAt": "2026-07-01"
     },
     {
-      "id": "c003", "name": "台幣現金（國泰）", "symbol": "",
-      "shares": 1, "costPerShare": 689000, "price": 689000,
-      "currency": "TWD", "market": "現金", "account": "國泰",
-      "tags": ["現金", "無風險"], "updatedAt": "2026-07-01"
+      "id": "c003",
+      "name": "台幣現金（國泰）",
+      "symbol": "",
+      "shares": 1,
+      "costPerShare": 689000,
+      "price": 689000,
+      "currency": "TWD",
+      "market": "台股",
+      "account": "國泰",
+      "tags": [
+        "現金",
+        "無風險"
+      ],
+      "updatedAt": "2026-07-01"
     },
     {
-      "id": "c004", "name": "台幣現金（台新）", "symbol": "",
-      "shares": 1, "costPerShare": 672545, "price": 672545,
-      "currency": "TWD", "market": "現金", "account": "台新",
-      "tags": ["現金", "無風險"], "updatedAt": "2026-07-01"
+      "id": "c004",
+      "name": "台幣現金（台新）",
+      "symbol": "",
+      "shares": 1,
+      "costPerShare": 672545,
+      "price": 672545,
+      "currency": "TWD",
+      "market": "台股",
+      "account": "台新",
+      "tags": [
+        "現金",
+        "無風險"
+      ],
+      "updatedAt": "2026-07-01"
     }
   ],
   "settings": {
