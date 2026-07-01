@@ -171,21 +171,22 @@
           <input id="fName" type="text" required placeholder="元大台灣50"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
-        <div>
-          <label class="text-xs text-gray-500 mb-1 block">代碼（股票留空則不更新價格）</label>
+        <div id="symbolRow">
+          <label class="text-xs text-gray-500 mb-1 block">代碼（留空則不自動更新價格）</label>
           <input id="fSymbol" type="text" placeholder="0050.TW"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-3">
+      <!-- 股票模式 -->
+      <div id="stockFields" class="grid grid-cols-3 gap-3">
         <div>
           <label class="text-xs text-gray-500 mb-1 block">持有股數</label>
-          <input id="fShares" type="number" step="any" required placeholder="100"
+          <input id="fShares" type="number" step="any" placeholder="100"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
         <div>
           <label class="text-xs text-gray-500 mb-1 block">買入成本/股</label>
-          <input id="fCost" type="number" step="any" required placeholder="150"
+          <input id="fCost" type="number" step="any" placeholder="150"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
         <div>
@@ -193,6 +194,12 @@
           <input id="fPrice" type="number" step="any" placeholder="185.5"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
+      </div>
+      <!-- 現金模式 -->
+      <div id="cashFields" class="hidden">
+        <label class="text-xs text-gray-500 mb-1 block">金額</label>
+        <input id="fCashAmount" type="number" step="any" placeholder="200000"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
@@ -204,7 +211,7 @@
         </div>
         <div>
           <label class="text-xs text-gray-500 mb-1 block">市場</label>
-          <select id="fMarket" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <select id="fMarket" onchange="onMarketChange()" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
             <option value="台股">台股</option>
             <option value="美股">美股</option>
             <option value="現金">現金</option>
@@ -494,10 +501,22 @@ async function fetchPrice(symbol) {
 }
 
 // ─── 新增 / 編輯 Modal ───────────────────────────────
+function onMarketChange() {
+  const isCash = document.getElementById('fMarket').value === '現金';
+  document.getElementById('stockFields').classList.toggle('hidden', isCash);
+  document.getElementById('cashFields').classList.toggle('hidden', !isCash);
+  document.getElementById('symbolRow').classList.toggle('hidden', isCash);
+  document.getElementById('fShares').required = !isCash;
+  document.getElementById('fCost').required = !isCash;
+  document.getElementById('fCashAmount').required = isCash;
+}
+
 function openAdd() {
   document.getElementById('modalTitle').textContent = '新增資產';
   document.getElementById('assetForm').reset();
   document.getElementById('editId').value = '';
+  document.getElementById('fMarket').value = '台股';
+  onMarketChange();
   document.getElementById('modal').classList.remove('hidden');
 }
 
@@ -508,12 +527,17 @@ function openEdit(id) {
   document.getElementById('editId').value = id;
   document.getElementById('fName').value = asset.name;
   document.getElementById('fSymbol').value = asset.symbol;
-  document.getElementById('fShares').value = asset.shares;
-  document.getElementById('fCost').value = asset.costPerShare;
-  document.getElementById('fPrice').value = asset.price;
   document.getElementById('fCurrency').value = asset.currency;
   document.getElementById('fMarket').value = asset.market;
   document.getElementById('fTags').value = asset.tags.join(', ');
+  onMarketChange();
+  if (asset.market === '現金') {
+    document.getElementById('fCashAmount').value = asset.price * asset.shares;
+  } else {
+    document.getElementById('fShares').value = asset.shares;
+    document.getElementById('fCost').value = asset.costPerShare;
+    document.getElementById('fPrice').value = asset.price;
+  }
   document.getElementById('modal').classList.remove('hidden');
 }
 
@@ -524,15 +548,22 @@ function closeModal() {
 function saveAsset(e) {
   e.preventDefault();
   const id = document.getElementById('editId').value;
+  const market = document.getElementById('fMarket').value;
+  const isCash = market === '現金';
+  const cashAmount = parseFloat(document.getElementById('fCashAmount').value) || 0;
   const asset = {
     name: document.getElementById('fName').value.trim(),
-    symbol: document.getElementById('fSymbol').value.trim(),
-    shares: parseFloat(document.getElementById('fShares').value),
-    costPerShare: parseFloat(document.getElementById('fCost').value),
-    price: parseFloat(document.getElementById('fPrice').value) || 0,
+    symbol: isCash ? '' : document.getElementById('fSymbol').value.trim(),
+    shares: isCash ? 1 : parseFloat(document.getElementById('fShares').value),
+    costPerShare: isCash ? cashAmount : parseFloat(document.getElementById('fCost').value),
+    price: isCash ? cashAmount : (parseFloat(document.getElementById('fPrice').value) || 0),
     currency: document.getElementById('fCurrency').value,
-    market: document.getElementById('fMarket').value,
-    tags: document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean),
+    market,
+    tags: isCash
+      ? (document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean).length
+          ? document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean)
+          : ['現金', '無風險'])
+      : document.getElementById('fTags').value.split(',').map(t => t.trim()).filter(Boolean),
     updatedAt: new Date().toISOString().split('T')[0]
   };
 
