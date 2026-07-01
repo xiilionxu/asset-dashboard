@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +7,88 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    /* ── 主題變數 ── */
+    :root {
+      --bg-page:    #f9fafb;
+      --bg-card:    #ffffff;
+      --bg-header:  #ffffff;
+      --bg-row:     #f9fafb;
+      --border:     #e5e7eb;
+      --border-light: #f3f4f6;
+      --text-main:  #111827;
+      --text-sub:   #6b7280;
+      --text-muted: #9ca3af;
+      --input-bg:   #ffffff;
+      --filter-bg:  #ffffff;
+      --filter-text:#6b7280;
+      --modal-bg:   #ffffff;
+      --toast-bg:   #111827;
+    }
+    html.dark {
+      --bg-page:    #0f172a;
+      --bg-card:    #1e293b;
+      --bg-header:  #1e293b;
+      --bg-row:     #263045;
+      --border:     #334155;
+      --border-light:#2d3f55;
+      --text-main:  #f1f5f9;
+      --text-sub:   #94a3b8;
+      --text-muted: #64748b;
+      --input-bg:   #0f172a;
+      --filter-bg:  #1e293b;
+      --filter-text:#94a3b8;
+      --modal-bg:   #1e293b;
+      --toast-bg:   #0f172a;
+    }
+
+    body         { background: var(--bg-page); color: var(--text-main); }
+    header, .filter-bar { background: var(--bg-header); border-color: var(--border); }
+    .card        { background: var(--bg-card); border-color: var(--border); }
+    .text-main   { color: var(--text-main); }
+    .text-sub    { color: var(--text-sub); }
+    .text-muted  { color: var(--text-muted); }
+    .divider     { background: var(--border); }
+
+    /* 表格 */
+    thead tr     { background: var(--bg-row); }
+    tbody tr:hover { background: var(--bg-row); }
+    tbody tr     { border-color: var(--border-light); }
+    th, td       { border-color: var(--border-light); }
+
+    /* 輸入框 */
+    input, select {
+      background: var(--input-bg) !important;
+      border-color: var(--border) !important;
+      color: var(--text-main) !important;
+    }
+    input::placeholder { color: var(--text-muted); }
+
+    /* 篩選按鈕 */
+    .filter-btn  { background: var(--filter-bg); color: var(--filter-text); border-color: var(--border); }
+    .filter-btn:hover { background: var(--bg-row); }
+    .filter-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+    /* Modal */
+    #modal > div > div { background: var(--modal-bg); }
+    #exportToast { background: var(--toast-bg); }
+
+    /* 深色模式下 card border */
+    html.dark .border-gray-200 { border-color: var(--border); }
+    html.dark .bg-white        { background: var(--bg-card); }
+    html.dark .bg-gray-50      { background: var(--bg-page); }
+    html.dark .bg-gray-100     { background: #1e293b; }
+    html.dark .text-gray-900   { color: var(--text-main); }
+    html.dark .text-gray-700   { color: var(--text-sub); }
+    html.dark .text-gray-600   { color: var(--text-sub); }
+    html.dark .text-gray-500   { color: var(--text-muted); }
+    html.dark .text-gray-400   { color: var(--text-muted); }
+    html.dark .border-gray-300 { border-color: var(--border); }
+    html.dark .border-gray-100 { border-color: var(--border-light); }
+    html.dark .divide-gray-100 > * { border-color: var(--border-light); }
+    html.dark .bg-gray-900     { background: var(--toast-bg); }
+    html.dark .border-b        { border-color: var(--border); }
+
+    /* tag 深色適配 */
     .tag { @apply inline-block px-2 py-0.5 rounded-full text-xs font-medium mr-1; }
     .tag-進攻 { background:#fef3c7; color:#92400e; }
     .tag-防守 { background:#dbeafe; color:#1e40af; }
@@ -14,9 +96,22 @@
     .tag-現金 { background:#d1fae5; color:#065f46; }
     .tag-無風險 { background:#e0e7ff; color:#3730a3; }
     .tag-ETF   { background:#f3f4f6; color:#374151; }
-    .positive { color: #059669; }
-    .negative { color: #dc2626; }
+
+    .positive { color: #10b981; }
+    .negative { color: #f87171; }
     .chart-container { position: relative; height: 220px; }
+
+    /* 主題切換按鈕 */
+    #btnTheme {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-sub);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 16px;
+      transition: background .2s, border-color .2s;
+    }
+    #btnTheme:hover { background: var(--bg-row); }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -49,6 +144,8 @@
         class="border border-gray-300 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 active:scale-95 transition">
         ＋ 新增資產
       </button>
+      <!-- 深淺主題切換 -->
+      <button id="btnTheme" title="切換深淺主題">🌙</button>
     </div>
   </div>
 </header>
@@ -628,6 +725,25 @@ function showToast(msg) {
   el.classList.remove('hidden');
   setTimeout(() => el.classList.add('hidden'), 4000);
 }
+
+// ─── 深淺主題 ────────────────────────────────────────
+function applyTheme(dark) {
+  document.documentElement.classList.toggle('dark', dark);
+  document.getElementById('btnTheme').textContent = dark ? '☀️' : '🌙';
+  // Chart.js 圖表文字顏色跟著換
+  Chart.defaults.color = dark ? '#94a3b8' : '#6b7280';
+  if (Object.keys(charts).length) render();
+}
+
+document.getElementById('btnTheme').onclick = () => {
+  const isDark = document.documentElement.classList.contains('dark');
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  applyTheme(!isDark);
+};
+
+// 讀取上次選擇
+const savedTheme = localStorage.getItem('theme');
+applyTheme(savedTheme === 'dark');
 
 // ─── 啟動 ────────────────────────────────────────────
 bindFilterButtons();
