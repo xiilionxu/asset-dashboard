@@ -1,82 +1,112 @@
 {
   "assets": [
     {
-      "id": "001",
-      "name": "元大台灣50",
-      "symbol": "0050.TW",
-      "shares": 100,
-      "costPerShare": 150.0,
-      "currency": "TWD",
-      "market": "台股",
-      "account": "國泰",
-      "tags": ["ETF", "防守"],
-      "price": 185.5,
-      "updatedAt": "2026-07-01"
+      "id": "s001", "name": "Palantir Technologies", "symbol": "PLTR",
+      "shares": 200, "costPerShare": 13.3116, "price": 127.355,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
     },
     {
-      "id": "002",
-      "name": "元大台灣50正2",
-      "symbol": "00631L.TW",
-      "shares": 50,
-      "costPerShare": 80.0,
-      "currency": "TWD",
-      "market": "台股",
-      "account": "台新",
-      "tags": ["ETF", "進攻", "槓桿"],
-      "price": 95.0,
-      "updatedAt": "2026-07-01"
+      "id": "s002", "name": "NVIDIA", "symbol": "NVDA",
+      "shares": 100, "costPerShare": 17.8094, "price": 195.57,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
     },
     {
-      "id": "003",
-      "name": "Invesco QQQ",
-      "symbol": "QQQ",
-      "shares": 5,
-      "costPerShare": 420.0,
-      "currency": "USD",
-      "market": "美股",
-      "account": "永豐",
-      "tags": ["ETF", "防守"],
-      "price": 480.0,
-      "updatedAt": "2026-07-01"
+      "id": "s003", "name": "Tesla", "symbol": "TSLA",
+      "shares": 40, "costPerShare": 210.278, "price": 425.895,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
     },
     {
-      "id": "004",
-      "name": "ProShares UltraPro QQQ",
-      "symbol": "TQQQ",
-      "shares": 20,
-      "costPerShare": 55.0,
-      "currency": "USD",
-      "market": "美股",
-      "account": "永豐",
-      "tags": ["ETF", "進攻", "槓桿"],
-      "price": 65.0,
-      "updatedAt": "2026-07-01"
+      "id": "s004", "name": "Micron Technology", "symbol": "MU",
+      "shares": 10, "costPerShare": 216.50, "price": 1052.1325,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
     },
     {
-      "id": "005",
-      "name": "台幣現金/定存",
-      "symbol": "",
-      "shares": 1,
-      "costPerShare": 200000.0,
-      "currency": "TWD",
-      "market": "現金",
-      "account": "國泰",
-      "tags": ["現金", "無風險"],
-      "price": 200000.0,
-      "updatedAt": "2026-07-01"
+      "id": "s005", "name": "TTM Technologies", "symbol": "TTMI",
+      "shares": 30, "costPerShare": 59.2563, "price": 174.53,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
     },
     {
-      "id": "006",
-      "name": "美元現金",
-      "symbol": "",
-      "shares": 1,
-      "costPerShare": 5000.0,
-      "currency": "USD",
-      "market": "現金",
-      "account": "永豐",
-      "tags": ["現金", "無風險"],
-      "price": 5000.0,
-      "updatedAt": "2026-07-01"
+      "id": "s006", "name": "Alliance Resource Partners", "symbol": "ARLP",
+      "shares": 150, "costPerShare": 4.5283, "price": 23.80,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s007", "name": "Celestica", "symbol": "CLS",
+      "shares": 10, "costPerShare": 82.60, "price": 348.45,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s008", "name": "GASLOG PARTNERS Pref B", "symbol": "GLOP-B",
+      "shares": 100, "costPerShare": 14.28, "price": 25.9734,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s009", "name": "SPCX", "symbol": "SPCX",
+      "shares": 2, "costPerShare": 151.23, "price": 159.90,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s010", "name": "Ondas Holdings", "symbol": "ONDS",
+      "shares": 200, "costPerShare": 8.6105, "price": 8.035,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s011", "name": "SEI Investments", "symbol": "SEIC",
+      "shares": 40, "costPerShare": 76.675, "price": 73.6363,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s012", "name": "GameStop", "symbol": "GME",
+      "shares": 4, "costPerShare": 83.2475, "price": 22.29,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s013", "name": "Oklo", "symbol": "OKLO",
+      "shares": 12, "costPerShare": 80.60, "price": 51.94,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s014", "name": "EQT Corporation", "symbol": "EQT",
+      "shares": 70, "costPerShare": 58.56, "price": 52.54,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "s015", "name": "PSIX", "symbol": "PSIX",
+      "shares": 60, "costPerShare": 60.6433, "price": 37.00,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "e001", "name": "Schwab Treasury Money Fund", "symbol": "SNXX",
+      "shares": 10, "costPerShare": 30.612, "price": 33.075,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["ETF", "美股"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "e002", "name": "Direxion Daily South Korea Bull 3X", "symbol": "KORU",
+      "shares": 2, "costPerShare": 764.53, "price": 626.595,
+      "currency": "USD", "market": "美股", "account": "嘉信",
+      "tags": ["ETF", "美股", "槓桿"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "c001", "name": "美元現金（嘉信）", "symbol": "",
+      "shares": 1, "costPerShare": 1806.23, "price": 1806.23,
+      "currency": "USD", "market": "現金", "account": "嘉信",
+      "tags": ["現金", "無風險"], "updatedAt": "2026-07-01"
     }
   ],
   "settings": {
