@@ -646,6 +646,12 @@
       "id": "1782919492613"
     },
     {
+      "id": "d001", "name": "貸款（台新）", "symbol": "",
+      "shares": 1, "costPerShare": 804465, "price": 804465,
+      "currency": "TWD", "market": "負債", "account": "台新",
+      "tags": ["負債"], "updatedAt": "2026-07-01"
+    },
+    {
       "id": "c003", "name": "台幣現金（國泰）", "symbol": "",
       "shares": 1, "costPerShare": 689000, "price": 689000,
       "currency": "TWD", "market": "現金", "account": "國泰",
