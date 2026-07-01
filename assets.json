@@ -646,6 +646,18 @@
       "id": "1782919492613"
     },
     {
+      "id": "d002", "name": "貸款（第一）", "symbol": "",
+      "shares": 1, "costPerShare": 72206, "price": 72206,
+      "currency": "TWD", "market": "負債", "account": "第一",
+      "tags": ["負債"], "updatedAt": "2026-07-01"
+    },
+    {
+      "id": "d003", "name": "貸款（兆豐）", "symbol": "",
+      "shares": 1, "costPerShare": 180336, "price": 180336,
+      "currency": "TWD", "market": "負債", "account": "兆豐",
+      "tags": ["負債"], "updatedAt": "2026-07-01"
+    },
+    {
       "id": "d001", "name": "貸款（台新）", "symbol": "",
       "shares": 1, "costPerShare": 804465, "price": 804465,
       "currency": "TWD", "market": "負債", "account": "台新",
