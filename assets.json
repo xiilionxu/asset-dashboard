@@ -280,7 +280,7 @@
       "symbol": "IWY",
       "shares": 22,
       "costPerShare": 225.71727,
-      "price": 289.75,
+      "price": 290.98,
       "currency": "USD",
       "market": "美股",
       "account": "FT",
@@ -288,7 +288,7 @@
         "ETF",
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "f002",
@@ -296,7 +296,7 @@
       "symbol": "PFF",
       "shares": 160,
       "costPerShare": 32.6625,
-      "price": 30.545,
+      "price": 30.72,
       "currency": "USD",
       "market": "美股",
       "account": "FT",
@@ -304,7 +304,7 @@
         "ETF",
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "f003",
@@ -312,7 +312,7 @@
       "symbol": "RSP",
       "shares": 26,
       "costPerShare": 188.68923,
-      "price": 214.485,
+      "price": 221.42,
       "currency": "USD",
       "market": "美股",
       "account": "FT",
@@ -320,7 +320,7 @@
         "ETF",
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "f004",
@@ -328,7 +328,7 @@
       "symbol": "SPMO",
       "shares": 45,
       "costPerShare": 115.35,
-      "price": 156.4,
+      "price": 148.78,
       "currency": "USD",
       "market": "美股",
       "account": "FT",
@@ -336,7 +336,7 @@
         "ETF",
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "f005",
@@ -344,7 +344,7 @@
       "symbol": "VNQ",
       "shares": 53,
       "costPerShare": 92.7617,
-      "price": 97.105,
+      "price": 97.97,
       "currency": "USD",
       "market": "美股",
       "account": "FT",
@@ -352,15 +352,32 @@
         "ETF",
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
+    },
+    {
+      "id": "f006",
+      "name": "Direxion Daily South Korea Bull 3X",
+      "symbol": "KORU",
+      "shares": 60,
+      "costPerShare": 0,
+      "price": 21.74,
+      "currency": "USD",
+      "market": "美股",
+      "account": "FT",
+      "tags": [
+        "ETF",
+        "美股",
+        "槓桿"
+      ],
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "c002",
       "name": "美元現金（FT）",
       "symbol": "",
       "shares": 1,
-      "costPerShare": 5031.16,
-      "price": 5031.16,
+      "costPerShare": 3555.35,
+      "price": 3555.35,
       "currency": "USD",
       "market": "美股",
       "account": "FT",
@@ -368,7 +385,7 @@
         "現金",
         "無風險"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t001",
