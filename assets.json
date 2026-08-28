@@ -6,14 +6,14 @@
       "symbol": "PLTR",
       "shares": 200,
       "costPerShare": 13.3116,
-      "price": 127.485,
+      "price": 186.28,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s002",
@@ -21,14 +21,14 @@
       "symbol": "NVDA",
       "shares": 100,
       "costPerShare": 17.8094,
-      "price": 196.64,
+      "price": 226.6,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s003",
@@ -36,14 +36,14 @@
       "symbol": "TSLA",
       "shares": 40,
       "costPerShare": 210.278,
-      "price": 431.998,
+      "price": 353.765,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s004",
@@ -51,14 +51,14 @@
       "symbol": "MU",
       "shares": 10,
       "costPerShare": 216.5,
-      "price": 1056.155,
+      "price": 935.73,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s005",
@@ -66,14 +66,14 @@
       "symbol": "TTMI",
       "shares": 30,
       "costPerShare": 59.2563,
-      "price": 176.46,
+      "price": 122.39,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s006",
@@ -81,14 +81,14 @@
       "symbol": "ARLP",
       "shares": 150,
       "costPerShare": 4.5283,
-      "price": 23.85,
+      "price": 26.31,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s007",
@@ -96,14 +96,14 @@
       "symbol": "CLS",
       "shares": 10,
       "costPerShare": 82.6,
-      "price": 351.185,
+      "price": 308.78,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s008",
@@ -111,14 +111,14 @@
       "symbol": "GLOP-B",
       "shares": 100,
       "costPerShare": 14.28,
-      "price": 25.9734,
+      "price": 25.85,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s009",
@@ -126,14 +126,14 @@
       "symbol": "SPCX",
       "shares": 2,
       "costPerShare": 151.23,
-      "price": 161.22,
+      "price": 142.59,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s010",
@@ -141,14 +141,14 @@
       "symbol": "ONDS",
       "shares": 200,
       "costPerShare": 8.6105,
-      "price": 8.32,
+      "price": 8.2384,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s011",
@@ -156,14 +156,14 @@
       "symbol": "SEIC",
       "shares": 40,
       "costPerShare": 76.675,
-      "price": 90.1,
+      "price": 51.61,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s012",
@@ -171,14 +171,14 @@
       "symbol": "GME",
       "shares": 4,
       "costPerShare": 83.2475,
-      "price": 22.29,
+      "price": 18.15,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s013",
@@ -186,14 +186,14 @@
       "symbol": "OKLO",
       "shares": 12,
       "costPerShare": 80.6,
-      "price": 53.31,
+      "price": 41.37,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s014",
@@ -201,14 +201,14 @@
       "symbol": "EQT",
       "shares": 70,
       "costPerShare": 58.56,
-      "price": 52.375,
+      "price": 54.67,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "s015",
@@ -216,22 +216,22 @@
       "symbol": "PSIX",
       "shares": 60,
       "costPerShare": 60.6433,
-      "price": 37.51,
+      "price": 37.12,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
       "tags": [
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "e001",
       "name": "Schwab Treasury Money Fund",
       "symbol": "SNXX",
-      "shares": 10,
-      "costPerShare": 30.612,
-      "price": 33.95,
+      "shares": 20,
+      "costPerShare": 29.9975,
+      "price": 12.905,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
@@ -239,15 +239,15 @@
         "ETF",
         "美股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "e002",
       "name": "Direxion Daily South Korea Bull 3X",
       "symbol": "KORU",
-      "shares": 2,
-      "costPerShare": 764.53,
-      "price": 642.195,
+      "shares": 80,
+      "costPerShare": 33.4753,
+      "price": 21.57,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
@@ -256,15 +256,15 @@
         "美股",
         "槓桿"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "c001",
       "name": "美元現金（嘉信）",
       "symbol": "",
       "shares": 1,
-      "costPerShare": 1806.23,
-      "price": 1806.23,
+      "costPerShare": 412.19,
+      "price": 412.19,
       "currency": "USD",
       "market": "美股",
       "account": "嘉信",
@@ -272,7 +272,7 @@
         "現金",
         "無風險"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "f001",
