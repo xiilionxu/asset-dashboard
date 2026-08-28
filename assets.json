@@ -757,8 +757,8 @@
       "name": "台幣現金（國泰）",
       "symbol": "",
       "shares": 1,
-      "costPerShare": 689000,
-      "price": 689000,
+      "costPerShare": 366000,
+      "price": 366000,
       "currency": "TWD",
       "market": "台股",
       "account": "國泰",
@@ -766,15 +766,15 @@
         "現金",
         "無風險"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "c004",
       "name": "台幣現金（台新）",
       "symbol": "",
       "shares": 1,
-      "costPerShare": 672545,
-      "price": 672545,
+      "costPerShare": 725712,
+      "price": 725712,
       "currency": "TWD",
       "market": "台股",
       "account": "台新",
@@ -782,7 +782,7 @@
         "現金",
         "無風險"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     }
   ],
   "settings": {
