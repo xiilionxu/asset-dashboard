@@ -374,9 +374,9 @@
       "id": "t001",
       "name": "元大台灣50正2",
       "symbol": "00631L.TW",
-      "shares": 2000,
+      "shares": 6000,
       "costPerShare": 36.77,
-      "price": 39.48,
+      "price": 36.3,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
@@ -385,15 +385,15 @@
         "台股",
         "槓桿"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t002",
       "name": "群益臺灣加槓正2",
       "symbol": "00685L.TW",
-      "shares": 200,
+      "shares": 5000,
       "costPerShare": 277.11,
-      "price": 306,
+      "price": 11.96,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
@@ -402,7 +402,7 @@
         "台股",
         "槓桿"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t003",
@@ -410,14 +410,14 @@
       "symbol": "1432.TW",
       "shares": 1,
       "costPerShare": 19,
-      "price": 15.2,
+      "price": 15.05,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t004",
@@ -425,14 +425,14 @@
       "symbol": "2308.TW",
       "shares": 20,
       "costPerShare": 1937.75,
-      "price": 1990,
+      "price": 1830,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t005",
@@ -440,14 +440,14 @@
       "symbol": "2330.TW",
       "shares": 270,
       "costPerShare": 452.07,
-      "price": 2505,
+      "price": 2420,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t006",
@@ -455,14 +455,14 @@
       "symbol": "2408.TW",
       "shares": 1000,
       "costPerShare": 74.8,
-      "price": 421,
+      "price": 540,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t007",
@@ -470,14 +470,14 @@
       "symbol": "2454.TW",
       "shares": 100,
       "costPerShare": 545.94,
-      "price": 4335,
+      "price": 3985,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t008",
@@ -492,7 +492,7 @@
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t009",
@@ -500,29 +500,29 @@
       "symbol": "2727.TW",
       "shares": 1,
       "costPerShare": 182,
-      "price": 247.5,
+      "price": 234,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t010",
       "name": "台新金",
       "symbol": "2887.TW",
-      "shares": 1344,
+      "shares": 1379,
       "costPerShare": 12.22,
-      "price": 33.35,
+      "price": 37.5,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t011",
@@ -530,7 +530,7 @@
       "symbol": "",
       "shares": 350,
       "costPerShare": 0,
-      "price": 9.48,
+      "price": 9.51,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
@@ -538,7 +538,7 @@
         "台股",
         "特別股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t012",
@@ -546,14 +546,14 @@
       "symbol": "3035.TW",
       "shares": 100,
       "costPerShare": 210.29,
-      "price": 212,
+      "price": 180.5,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t013",
@@ -561,14 +561,14 @@
       "symbol": "3231.TW",
       "shares": 100,
       "costPerShare": 160.72,
-      "price": 159.5,
+      "price": 178,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t014",
@@ -576,14 +576,14 @@
       "symbol": "3711.TW",
       "shares": 100,
       "costPerShare": 627.38,
-      "price": 703,
+      "price": 621,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t015",
@@ -591,14 +591,14 @@
       "symbol": "7853.TW",
       "shares": 300,
       "costPerShare": 352.96,
-      "price": 360.5,
+      "price": 299.5,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t016",
@@ -606,29 +606,74 @@
       "symbol": "8271.TW",
       "shares": 200,
       "costPerShare": 207.85,
-      "price": 180,
+      "price": 232.5,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
     },
     {
       "id": "t017",
       "name": "群聯",
       "symbol": "8299.TW",
-      "shares": 20,
+      "shares": 30,
       "costPerShare": 2371.4,
-      "price": 2270,
+      "price": 2150,
       "currency": "TWD",
       "market": "台股",
       "account": "富邦",
       "tags": [
         "台股"
       ],
-      "updatedAt": "2026-07-01"
+      "updatedAt": "2026-07-02"
+    },
+    {
+      "id": "t018",
+      "name": "富喬",
+      "symbol": "1815.TW",
+      "shares": 120,
+      "costPerShare": 125.5,
+      "price": 125.5,
+      "currency": "TWD",
+      "market": "台股",
+      "account": "富邦",
+      "tags": [
+        "台股"
+      ],
+      "updatedAt": "2026-07-02"
+    },
+    {
+      "id": "t019",
+      "name": "台光電",
+      "symbol": "2383.TW",
+      "shares": 2,
+      "costPerShare": 5490,
+      "price": 5490,
+      "currency": "TWD",
+      "market": "台股",
+      "account": "富邦",
+      "tags": [
+        "台股"
+      ],
+      "updatedAt": "2026-07-02"
+    },
+    {
+      "id": "t020",
+      "name": "欣興",
+      "symbol": "3037.TW",
+      "shares": 60,
+      "costPerShare": 1110,
+      "price": 1110,
+      "currency": "TWD",
+      "market": "台股",
+      "account": "富邦",
+      "tags": [
+        "台股"
+      ],
+      "updatedAt": "2026-07-02"
     },
     {
       "name": "富邦台50",
