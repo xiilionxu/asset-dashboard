@@ -119,6 +119,8 @@
     tr.liability-row td  { color: #dc2626; }
     html.dark tr.liability-row td { color: #f87171; }
 
+    .idio-over { background: #fef2f2; }
+    html.dark .idio-over { background: #450a0a; }
     .positive { color: #10b981; }
     .negative { color: #f87171; }
     .chart-container { position: relative; height: 220px; }
@@ -281,6 +283,42 @@
     </div>
   </div>
 
+  <!-- 特有風險檢查（2026-10-19 加入）-->
+  <div class="bg-white rounded-xl border border-gray-200 overflow-hidden mt-6">
+    <div class="px-5 py-3 border-b border-gray-100 flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <p class="text-sm font-semibold text-gray-700">特有風險檢查</p>
+        <p class="text-xs text-gray-400 mt-0.5">
+          市值 × 特有波動（扣掉大盤後純屬該公司的波動）。這塊風險沒有對應的預期報酬
+          —— 除非選股能力可被驗證。
+        </p>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <label class="text-gray-500">單一部位上限</label>
+        <input id="idioCap" type="number" step="10000" value="100000"
+               class="w-28 border border-gray-300 rounded px-2 py-1 text-right focus:outline-none focus:ring-2 focus:ring-blue-400">
+        <span class="text-gray-400">元/年</span>
+      </div>
+    </div>
+    <div class="px-5 py-3 border-b border-gray-100 text-xs text-gray-500" id="idioSummary"></div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
+            <th class="text-left px-5 py-3 font-medium">資產</th>
+            <th class="text-right px-4 py-3 font-medium">市值（台幣）</th>
+            <th class="text-right px-4 py-3 font-medium">特有波動</th>
+            <th class="text-right px-4 py-3 font-medium">特有風險貢獻</th>
+            <th class="text-right px-4 py-3 font-medium">占總特有風險</th>
+            <th class="text-left px-4 py-3 font-medium">建議</th>
+          </tr>
+        </thead>
+        <tbody id="idioTable" class="divide-y divide-gray-100"></tbody>
+      </table>
+    </div>
+    <div class="px-5 py-3 text-xs text-gray-400" id="idioFooter"></div>
+  </div>
+
 </main>
 
 <!-- 新增/編輯資產 Modal -->
@@ -383,10 +421,16 @@ let charts = {};
 const CHART_COLORS = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#84cc16'];
 
 // ─── 初始化 ─────────────────────────────────────────
+let SETTINGS = {};
+
 async function init() {
   const data = await fetch('assets.json?t=' + Date.now()).then(r => r.json());
   allAssets = data.assets;
-  document.getElementById('fxRate').value = data.settings?.usdToTwd ?? 32.5;
+  SETTINGS = data.settings ?? {};
+  document.getElementById('fxRate').value = SETTINGS.usdToTwd ?? 32.5;
+  const capEl = document.getElementById('idioCap');
+  capEl.value = SETTINGS.idioCap ?? 100000;
+  capEl.addEventListener('change', render);   // 改上限立即重算
   render();
 }
 
@@ -437,6 +481,7 @@ function render() {
   renderSummary(filtered, totalTWD);
   renderCharts(filtered, totalTWD);
   renderTable(filtered, totalTWD);
+  renderIdio(filtered);
   updateLastUpdated();
 }
 
@@ -549,6 +594,67 @@ function renderDonut(id, dataMap, total, colors) {
       }
     }
   });
+}
+
+// ─── 特有風險檢查 ───────────────────────────────────
+// 特有波動由 stock-backtester/calc_idio_vol.py 離線算好，寫進 assets.json 每筆的 idioVol
+// （台股對 0050、美股對 SPY，近 3 年）。沒有 idioVol 的部位會列在表格下方註記。
+function getIdioCap() {
+  const v = parseFloat(document.getElementById('idioCap').value);
+  return (isFinite(v) && v > 0) ? v : 100000;
+}
+
+function renderIdio(assets) {
+  const cap = getIdioCap();
+  const scored = [], skipped = [];
+  assets.forEach(a => {
+    if (a.market === '負債') return;
+    if (typeof a.idioVol === 'number' && a.idioVol > 0) {
+      const val = toTWD(a);
+      if (val > 0) scored.push({ a, val, contrib: val * a.idioVol });
+    } else if (a.symbol && !(a.tags || []).includes('現金')) {
+      skipped.push(a.name);
+    }
+  });
+  scored.sort((x, y) => y.contrib - x.contrib);
+
+  const sum  = scored.reduce((s, r) => s + r.contrib, 0);
+  const quad = Math.sqrt(scored.reduce((s, r) => s + r.contrib * r.contrib, 0));
+  const over = scored.filter(r => r.contrib > cap);
+  const net  = assets.filter(a => a.market !== '負債').reduce((s, a) => s + toTWD(a), 0)
+             - assets.filter(a => a.market === '負債').reduce((s, a) => s + toTWD(a), 0);
+  const pc = x => net > 0 ? (100 * x / net).toFixed(1) + '%' : '—';
+
+  document.getElementById('idioSummary').innerHTML =
+    `總特有風險（1σ/年）：<span class="font-semibold text-gray-700">${fmtTWD(quad)} ~ ${fmtTWD(sum)}</span>` +
+    `　｜　占淨資產 <span class="font-semibold text-gray-700">${pc(quad)} ~ ${pc(sum)}</span>` +
+    `　｜　超過上限 <span class="font-semibold ${over.length ? 'negative' : 'positive'}">${over.length}</span> 個部位` +
+    `<br><span class="text-gray-400">區間下界＝各部位獨立（平方和開根號），上界＝完全連動（直接相加）；` +
+    `持股多在同一循環裡，真實值偏上界。</span>`;
+
+  document.getElementById('idioTable').innerHTML = scored.map(r => {
+    const isOver = r.contrib > cap;
+    const tgt = cap / r.a.idioVol;
+    const advice = isOver
+      ? `<span class="negative">減到 ${fmtTWD(tgt)}（減 ${(100*(1-tgt/r.val)).toFixed(0)}%）</span>`
+      : `<span class="text-gray-300">—</span>`;
+    return `<tr class="${isOver ? 'idio-over' : ''} hover:bg-gray-50 transition-colors">
+      <td class="px-5 py-3">
+        <div class="font-medium text-gray-900">${r.a.name}</div>
+        <div class="text-xs text-gray-400">${r.a.symbol} · 對 ${r.a.idioBench || '—'}</div>
+      </td>
+      <td class="px-4 py-3 text-right text-gray-700">${fmtTWD(r.val)}</td>
+      <td class="px-4 py-3 text-right text-gray-500">${(100*r.a.idioVol).toFixed(1)}%</td>
+      <td class="px-4 py-3 text-right font-medium ${isOver ? 'negative' : 'text-gray-900'}">${fmtTWD(r.contrib)}</td>
+      <td class="px-4 py-3 text-right text-gray-500">${sum > 0 ? (100*r.contrib/sum).toFixed(1) : '—'}%</td>
+      <td class="px-4 py-3">${advice}</td>
+    </tr>`;
+  }).join('') || `<tr><td colspan="6" class="px-5 py-6 text-center text-gray-400 text-sm">沒有可計算的部位</td></tr>`;
+
+  const asOf = SETTINGS.idioVolAsOf || '—';
+  document.getElementById('idioFooter').innerHTML =
+    `特有波動更新日：${asOf}（calc_idio_vol.py 離線計算，近 3 年；台股對 0050、美股對 SPY）` +
+    (skipped.length ? `<br>無特有波動資料：${skipped.join('、')}（下市／資料不足／無代號）` : '');
 }
 
 function renderTable(assets, totalTWD) {
